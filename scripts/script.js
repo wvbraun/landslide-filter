@@ -30,8 +30,6 @@ var signle_emitter_burst_birth_rate = 10000;
 var multi_emitter_burst_birth_rate = 2500;
 
 
-var sound_pads = [];
-var number_of_sound_pads = 6;
 
 /*
 const playback_controller0 = Audio.getPlaybackController("main_loop_controller");
@@ -52,11 +50,13 @@ const playback_controllers = [
 
 var playback_controller_names = [
 	"main_loop_controller",
-	"kick_loop_controller",
+	"kick_loop_1_controller",
 	"snap_loop_controller",
 	"closed_hats_loop_controller",
 	"open_hats_loop_controller",
-	"snare_loop_controller"
+	"snare_loop_1_controller",
+	"kick_loop_2_controller",
+	"snare_loop_2_controller"
 ];
 
 var playback_controllers = [];
@@ -127,12 +127,8 @@ var play_sounds = function() {
 };
 
 var tapRegistrar = function(sound_pad) {
-	T.onTap(sound_pad.rotater).subscribe(function(gesture) {
-    //loop.can_play_audio = loop.can_play_audio ? false : true;
-    //loop.audiosource.hidden = loop.audiosource.hidden ? false : true;
-		// Audio.play(loop.audiosource);
-		//loop.rotater.hidden = true;
-
+	// T.onTap(sound_pad.rotater).subscribe(function(gesture) {
+	T.onTap(sound_pad.texture).subscribe(function(gesture) {
 		if (sound_pad.is_playing) {
 			sound_pad.is_playing = false;
 			var i = active_sounds.indexOf(sound_pad.playback_controller);
@@ -145,7 +141,6 @@ var tapRegistrar = function(sound_pad) {
 			sound_pad.is_playing = true;
 			active_sounds.push(sound_pad.playback_controller);
 			play_sounds();
-			//loop.playback_controller.setPlaying(true);
 		}
 
 		//for (var i = 0; i < loop.emitter.length; i++) {
@@ -156,6 +151,22 @@ var tapRegistrar = function(sound_pad) {
 		//}
 	});
 }
+
+
+var sound_pads = [];
+var number_of_sound_pads = 8; // 6;
+for (var i = 0; i < number_of_sound_pads; i++){
+  var fd = S.root.child("Device").child("Camera").child("Focal Distance");
+	sound_pads[i] = {
+		texture: fd.child("sound_pad_group").child("sound_pad_" + i),
+		audiosource: S.root.child("speaker_"+i),
+		playback_controller: playback_controllers[i],
+		is_playing: false
+	};
+
+	tapRegistrar(sound_pads[i]);
+}
+
 
 /*
 build balloons array:
@@ -169,7 +180,7 @@ balloons[]
 	emitter[] - array of emitters per balloon 1 emitter per colored balloon (0-35) 5 emitters for the polka dot balloons (36-38)
 	emitter_target_birthrate[] = array of target birth rates for each emitter
 */
-
+/*
 for (var i = 0; i < number_of_sound_pads; i++){
 	//get randomizers for movement and rotation
 	var bounce_rando = getRandomArbitrary(0, loop_bounce_amount)
@@ -195,7 +206,6 @@ for (var i = 0; i < number_of_sound_pads; i++){
   //loops[i].audiosource.hidden = (i !== 0);
   //loops[i].can_play_audio = (i === 0);
 
-  /*
 	//set balloon animation parameters
 	var balloon_y = balloons[i].mover.transform.y.lastValue;
 	if (up_down == 1){
@@ -215,10 +225,10 @@ for (var i = 0; i < number_of_sound_pads; i++){
 	}
 	balloons[i].rotater.transform.rotationY = A.animate(balloons[i].rotate_driver, balloons[i].rotate_sampler);
 	balloons[i].rotate_driver.start();
-  */
 
 	tapRegistrar(sound_pads[i]);
 }
+*/
 
 //helper function
 function getRandomArbitrary(min, max) {
